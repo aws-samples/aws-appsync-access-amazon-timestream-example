@@ -1,0 +1,18 @@
+schema {
+  query: Query
+}
+
+type IOT {
+  fleet: String
+  fuel_capacity: String
+  load_capacity: String
+  make: String
+  measure_value_double: String
+  model: String
+  time: String
+  truck_id: String
+}
+
+type Query {
+  getSensorData(durationInMinutes: String!): [IOT]
+}
