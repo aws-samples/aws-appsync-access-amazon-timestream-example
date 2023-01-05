@@ -2,11 +2,10 @@ const AWS = require("aws-sdk");
 const c = require('constants')
 const tsdbClient = new AWS.TimestreamQuery();
 
-//const QUERY_1 = "SELECT * FROM " + c.DATABASE_NAME + "." + c.TABLE_NAME " where time > ago(" + durationInMinutes + "m;
-
-const getSensorData = async (databaseName: string, tableName: string) => {
+const getSensorData = async (durationInMinutes: number) => {
     try {
-
+        const QUERY_1 = `SELECT * FROM ${process.env.TIMESTREAM_DB_NAME}.${process.env.TIMESTREAM_TABLE_NAME} where time > ago(${durationInMinutes}m`;
+        console.log(QUERY_1)
         return null
 
     } catch (err) {

@@ -13,7 +13,7 @@ export class AppsyncTimestreamExampleStack extends Stack {
     super(scope, id, props);
 
     const gqlApi = new GraphqlApi(this, 'Api', {
-      name: 'cdk-notes-appsync-api',
+      name: 'iot-timestream-appsync-api',
       schema: SchemaFile.fromAsset('graphql/schema.graphql'),
       authorizationConfig: {
         defaultAuthorization: {

@@ -14,5 +14,5 @@ type IOT {
 }
 
 type Query {
-  getSensorData(durationInMinutes: String!): [IOT]
+  getSensorData(durationInMinutes: Int): [IOT]
 }
