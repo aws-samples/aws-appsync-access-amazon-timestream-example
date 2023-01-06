@@ -4,12 +4,12 @@ schema {
 
 type IOT {
   fleet: String
-  fuel_capacity: String
-  load_capacity: String
+  fuel_capacity_in_litres: String
+  load_capacity_in_tons: String
   make: String
-  measure_value_double: String
+  current_fuel_lvl_in_litres: String
   model: String
-  time: String
+  time_in_epoch: String
   truck_id: String
 }
 

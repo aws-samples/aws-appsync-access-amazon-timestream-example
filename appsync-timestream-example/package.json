@@ -24,6 +24,7 @@
     "@aws-cdk/aws-lambda": "^1.187.0",
     "@aws-cdk/aws-timestream": "^1.187.0",
     "aws-cdk-lib": "2.59.0",
+    "cdk-nag": "^2.21.53",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.16"
   }

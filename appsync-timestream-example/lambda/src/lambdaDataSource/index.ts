@@ -1,5 +1,5 @@
 import { string } from 'yargs';
-import getSensorData from './../Resolvers/getSensorData';
+import getSensorData from './getSensorData';
 
 type AppSyncEvent = {
     info: {
