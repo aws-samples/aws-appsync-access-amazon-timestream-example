@@ -5,10 +5,8 @@ import { LambdaResolver } from '../lambda/lambda_stack';
 import { aws_timestream as timestream } from 'aws-cdk-lib';
 import { Schedule, Rule } from 'aws-cdk-lib/aws-events'
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets'
-
-
 import { DATABASE_NAME, TABLE_NAME } from './constant';
-
+import { NagSuppressions } from 'cdk-nag';
 
 
 export class AppsyncTimestreamExampleStack extends Stack {
@@ -36,6 +34,7 @@ export class AppsyncTimestreamExampleStack extends Stack {
     new CfnOutput(this, "Stack Region", { value: this.region });
 
     const { lambdaIoTEventsHandlerFn, lambdaTimestreamDataSimulatorFn } = new LambdaResolver(this, 'lambdaResolver');
+    const lambdaTimestreamDs = gqlApi.addLambdaDataSource('lambdaDatasource', lambdaIoTEventsHandlerFn);
 
     lambdaIoTEventsHandlerFn.addEnvironment('TIMESTREAM_DB_NAME', DATABASE_NAME)
     lambdaIoTEventsHandlerFn.addEnvironment('TIMESTREAM_TABLE_NAME', TABLE_NAME)
@@ -43,7 +42,7 @@ export class AppsyncTimestreamExampleStack extends Stack {
     lambdaTimestreamDataSimulatorFn.addEnvironment('TIMESTREAM_DB_NAME', DATABASE_NAME)
     lambdaTimestreamDataSimulatorFn.addEnvironment('TIMESTREAM_TABLE_NAME', TABLE_NAME)
 
-    const lambdaTimestreamDs = gqlApi.addLambdaDataSource('lambdaDatasource', lambdaIoTEventsHandlerFn);
+
 
     lambdaTimestreamDs.createResolver('Query', {
       typeName: "Query",
@@ -55,10 +54,6 @@ export class AppsyncTimestreamExampleStack extends Stack {
       targets: [new LambdaFunction(lambdaTimestreamDataSimulatorFn)],
     })
 
-    // const cfnDatabase = new timestream.CfnDatabase(this, 'MyCfnDatabase', {
-    //   databaseName: DATABASE_NAME
-    // });
-
     const cfnTable = new timestream.CfnTable(this, 'MyCfnTable', {
       databaseName: DATABASE_NAME,
       tableName: TABLE_NAME
@@ -66,6 +61,21 @@ export class AppsyncTimestreamExampleStack extends Stack {
 
 
     new CfnOutput(this, "Table ARN", { value: cfnTable.attrArn });
+
+    NagSuppressions.addStackSuppressions(this, [
+      {
+        id: 'AwsSolutions-ASC3',
+        reason: 'The GraphQL API does not have request level logging enabled.'
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        reason: 'The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.'
+      },
+      {
+        id: 'AwsSolutions-L1',
+        reason: 'The non-container Lambda function is not configured to use the latest runtime version.'
+      }
+    ])
 
 
   }

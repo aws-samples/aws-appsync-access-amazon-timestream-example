@@ -36,6 +36,7 @@ class IngestTimestream:
         current_time = IngestTimestream.current_milli_time()
         
         fuel_in_litres=random.randint(10,80)
+        gps_location_latlong='55.3618,-3.4433'
         
         dimensions = [
             {'Name': 'fleet', 'Value': "acme_fleet"},
@@ -57,9 +58,15 @@ class IngestTimestream:
             'Type': 'BIGINT'
         }
 
+        gps_location_latlong = {
+            'Name': 'gps_location_latlong',
+            'Value': str(gps_location_latlong),
+            'Type': 'BIGINT'
+        }
+
         computational_record = {
             'MeasureName': 'computational_record',
-            'MeasureValues': [current_fuel_lvl_in_litres],
+            'MeasureValues': [current_fuel_lvl_in_litres,gps_location_latlong],
             'MeasureValueType': 'MULTI'
         }
         

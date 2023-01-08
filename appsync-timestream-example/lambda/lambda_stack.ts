@@ -53,7 +53,7 @@ export class LambdaResolver extends Construct {
         this.lambdaIoTEventsHandlerFn = new Function(this, 'AppSyncIoTEventsHandler', {
             code: Code.fromAsset(path.join(__dirname, 'src/lambdaDataSource'), { exclude: ['*.ts'] }),
             handler: 'index.handler',
-            runtime: Runtime.NODEJS_14_X,
+            runtime: Runtime.NODEJS_18_X,
             memorySize: 1024,
             role: appsync_simulator_role,
             timeout: Duration.seconds(5)
