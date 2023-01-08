@@ -61,7 +61,7 @@ class IngestTimestream:
         gps_location_latlong = {
             'Name': 'gps_location_latlong',
             'Value': str(gps_location_latlong),
-            'Type': 'BIGINT'
+            'Type': 'VARCHAR'
         }
 
         computational_record = {

@@ -50,7 +50,7 @@ export class AppsyncTimestreamExampleStack extends Stack {
     });
 
     new Rule(this, 'addIoTEventRule', {
-      schedule: Schedule.rate(Duration.minutes(5)),
+      schedule: Schedule.rate(Duration.minutes(2)),
       targets: [new LambdaFunction(lambdaTimestreamDataSimulatorFn)],
     })
 
