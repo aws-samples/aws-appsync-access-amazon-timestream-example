@@ -52,6 +52,7 @@ Navigate to AppSync console and select on the API name to view the dashboard for
 
 ***GraphQL***
 
+`
 query getSensorData {
   getSensorData(durationInMinutes: 10) {
     time_in_epoch
@@ -64,6 +65,7 @@ query getSensorData {
     truck_id
   }
 }
+`
 
 **Command CLI**
 
