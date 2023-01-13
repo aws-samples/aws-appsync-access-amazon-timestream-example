@@ -73,7 +73,7 @@ You can use a curl to send a query via http post from the command line.
 
 **Build a client application**
 
-To learn how to build a client application refer <a href=https://docs.aws.amazon.com/appsync/latest/devguide/building-a-client-app.html>
+To learn how to build a client application refer <a href='https://docs.aws.amazon.com/appsync/latest/devguide/building-a-client-app.html"></a>
 
 
 
