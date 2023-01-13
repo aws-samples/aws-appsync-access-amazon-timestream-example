@@ -12,7 +12,7 @@ const getSensorData = async (durationInMinutes: number) => {
             QueryString: QUERY_1,
             NextToken: nextToken,
         }
-        response = await tsdbClient.query(params).promise();
+        response = await tsdbClient.query(params);
         let result = JSON.parse(parseQueryResult(response))
         console.log('query output', result)
 
