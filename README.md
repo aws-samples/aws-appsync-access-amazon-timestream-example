@@ -50,9 +50,9 @@ You can test an AppSync API using below multiple options.
 
 Navigate to AppSync console and select on the API name to view the dashboard for your API. Next click on Queries in the left-hand menu to view the query editor. From here, we can test out the API by running the following queries:
 
-GraphQL
+***GraphQL***
 
-`query getSensorData {
+query getSensorData {
   getSensorData(durationInMinutes: 10) {
     time_in_epoch
     current_fuel_lvl_in_litres
@@ -63,7 +63,7 @@ GraphQL
     model
     truck_id
   }
-}`
+}
 
 **Command CLI**
 
