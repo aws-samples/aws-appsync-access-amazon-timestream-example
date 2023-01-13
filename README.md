@@ -37,7 +37,7 @@ cost for using this sample. For full details, see the pricing pages for each AWS
 2. Prepare the deployment package - The `cdk.json` file tells the CDK Toolkit how to execute your app.
     * `npm run build`                                           compile typescript to js
 
-3. Configure the user pool in Amazon Cognito
+3. Deploy AppSync Api stack
     * `cdk deploy --all`     deploy stack
 4.	Please note down the GraphQL endpoint and API key for testing purpose
 
