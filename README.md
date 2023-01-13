@@ -47,10 +47,12 @@ cost for using this sample. For full details, see the pricing pages for each AWS
 You can test an AppSync API using below multiple options. 
 
 **AppSync Console**
+
 Navigate to AppSync console and select on the API name to view the dashboard for your API. Next click on Queries in the left-hand menu to view the query editor. From here, we can test out the API by running the following queries:
 
-`GraphQL
-query getSensorData {
+GraphQL
+
+`query getSensorData {
   getSensorData(durationInMinutes: 10) {
     time_in_epoch
     current_fuel_lvl_in_litres
@@ -63,7 +65,7 @@ query getSensorData {
   }
 }`
 
-** Command CLI** 
+**Command CLI**
 
 You can use a curl to send a query via http post from the command line.
 
@@ -79,7 +81,7 @@ To learn how to build a client application refer <a href=https://docs.aws.amazon
 
 In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incurring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
 
-    * cdk destroy --all
+`cdk destroy --all`
 
 
 ### Conclusion
