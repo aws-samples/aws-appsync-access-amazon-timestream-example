@@ -21,9 +21,7 @@ Target architecture:
 To deploy the solution,
 
 1. [An AWS Account](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)
-3. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-4. [Install AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
-
+2. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
 #### Deploy the example
 
@@ -31,16 +29,24 @@ To deploy the solution,
 You are responsible for the cost of the AWS services used while running this sample deployment. There is no additional
 cost for using this sample. For full details, see the pricing pages for each AWS service that you use in this sample. Prices are subject to change.
 
+> **Note**
+Due to this solution using Timestream, please ensure you choose a region to deploy this solution where Timestream is available.
+
+
 1. Clone the repository to your local machine.
     * `git clone https://github.com/aws-samples/aws-appsync-access-amazon-timestream-example`
 
-2. Prepare the deployment package - The `cdk.json` file tells the CDK Toolkit how to execute your app.
-    * `npm run build`                                           compile typescript to js
+2. Create the deployment package.
+    * `aws cloudformation package --template-file appsync-timestream-example/template.yaml --s3-bucket <YOUR_BUCKET_NAME_HERE> --output-template-file appsync-timestream-example/packaged-template.json`
 
-3. Deploy AppSync Api stack
-    * `cdk deploy --all`     deploy stack
-4.	Please note down the GraphQL endpoint and API key for testing purpose
+    > **Note**
+    Change <YOUR_BUCKET_NAME_HERE> above to be the name of an S3 bucket in the same region that you deploying this solution into.
 
+3. Deploy the solution
+    * `aws cloudformation deploy --template-file appsync-timestream-example/packaged-template.yaml --stack-name appsync-timestream-api --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
+
+4. Retrieve the details. Please note down the GraphQL endpoint and API key for testing purpose
+    * `aws cloudformation describe-stacks --stack-name appsync-timestream-api --query "Stacks[0].Outputs" --output table`
 
 ## Test the example
 
@@ -83,8 +89,7 @@ To learn how to build a client application refer [building a client application]
 
 In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incurring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
 
-`cdk destroy --all`
-
+`aws cloudformation delete-stack --stack-name appsync-timestream-api`
 
 ### Conclusion
 

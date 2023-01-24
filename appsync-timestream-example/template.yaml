@@ -1,0 +1,182 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+
+  iotstreamDatabase:
+    Type: AWS::Timestream::Database
+
+  sensoreventsTable:
+    Type: AWS::Timestream::Table
+    Properties:
+      DatabaseName: !Ref iotstreamDatabase
+
+  iotTimestreamAppSyncApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: iot-timestream-appsync-api
+      AuthenticationType: API_KEY
+      XrayEnabled: true
+
+  GraphQLSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt iotTimestreamAppSyncApi.ApiId
+      Definition: |
+        schema {
+          query: Query
+        }
+
+        type IOT {
+          fleet: String
+          fuel_capacity_in_litres: String
+          load_capacity_in_tons: String
+          make: String
+          current_fuel_lvl_in_litres: String
+          gps_location_latlong: String
+          model: String
+          truck_id: String
+        }
+
+        type Query {
+          getSensorData(durationInMinutes: Int): [IOT]
+        }
+
+  ApiKey:
+    Type: AWS::AppSync::ApiKey
+    DependsOn:
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt iotTimestreamAppSyncApi.ApiId
+      Description: Public access
+
+  DataSourceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service: appsync.amazonaws.com
+      Policies:
+        - PolicyName: lambdaInvokeFunction
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action: 'lambda:InvokeFunction'
+                Effect: Allow
+                Resource:
+                  - !GetAtt DataSourceFunction.Arn
+                  - !Sub '${DataSourceFunction.Arn}:*'
+
+  DataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt iotTimestreamAppSyncApi.ApiId
+      Type: AWS_LAMBDA
+      Name: lambdaDatasource
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt DataSourceFunction.Arn
+      ServiceRoleArn: !GetAtt DataSourceRole.Arn
+
+  Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt iotTimestreamAppSyncApi.ApiId
+      FieldName: getSensorData
+      TypeName: Query
+      DataSourceName: !GetAtt DataSource.Name
+      Kind: UNIT
+
+  DataSourceFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: VPC not required.
+          - id: W92
+            reason: Reserved Concurrency not required.
+          - id: W11
+            reason: Resource level permissions not available for this API.
+    Properties:
+      Runtime: nodejs14.x
+      MemorySize: 1024
+      Timeout: 2
+      Handler: index.handler
+      Environment:
+        Variables:
+          TIMESTREAM_DB_NAME: !Ref iotstreamDatabase
+          TIMESTREAM_TABLE_NAME: !Ref sensoreventsTable
+      Policies:
+        - Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - timestream:DescribeEndpoints
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - timestream:Select
+              Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable}'
+      CodeUri: lambda/src/lambdaDataSource
+
+  ScheduledFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: VPC not required.
+          - id: W92
+            reason: Reserved Concurrency not required.
+          - id: W11
+            reason: Resource level permissions not available for this API.
+    Properties:
+      Runtime: python3.9
+      MemorySize: 1024
+      Timeout: 5
+      Handler: lambda_function.lambda_handler
+      Environment:
+        Variables:
+          TIMESTREAM_DB_NAME: !Ref iotstreamDatabase
+          TIMESTREAM_TABLE_NAME: !Ref sensoreventsTable
+      Policies:
+        - Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - timestream:DescribeEndpoints
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - timestream:WriteRecords
+              Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable}'
+      Events:
+        ScheduleEvent:
+          Type: Schedule
+          Properties:
+            Schedule: rate(2 minutes)
+      CodeUri: lambda/src/timestream_data_simulator
+
+Outputs:
+
+  GraphQLAPIURL:
+    Value: !GetAtt iotTimestreamAppSyncApi.GraphQLUrl
+
+  GraphQLAPIKey:
+    Value: !GetAtt ApiKey.ApiKey
+
+  StackRegion:
+    Value: !Ref AWS::Region
+
+  TimestreamDatabaseARN:
+    Value: !GetAtt iotstreamDatabase.Arn
+
+  TableARN:
+    Value: !GetAtt sensoreventsTable.Arn
