@@ -124,7 +124,7 @@ Resources:
               Action:
                 - timestream:Select
               Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable.Name}'
-      CodeUri: lambda/src/lambdaDataSource
+      CodeUri: lambda/src/lambdaDataSource_js
 
   ScheduledFunction:
     Type: AWS::Serverless::Function
