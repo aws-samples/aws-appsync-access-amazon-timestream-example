@@ -37,7 +37,7 @@ Due to this solution using Timestream, please ensure you choose a region to depl
     * `git clone https://github.com/aws-samples/aws-appsync-access-amazon-timestream-example`
 
 2. Create the deployment package.
-    * `aws cloudformation package --template-file appsync-timestream-example/template.yaml --s3-bucket <YOUR_BUCKET_NAME_HERE> --output-template-file appsync-timestream-example/packaged-template.json`
+    * `aws cloudformation package --template-file appsync-timestream-example/template.yaml --s3-bucket <YOUR_BUCKET_NAME_HERE> --output-template-file appsync-timestream-example/packaged-template.yaml`
 
     > **Note**
     Change <YOUR_BUCKET_NAME_HERE> above to be the name of an S3 bucket in the same region that you deploying this solution into.
