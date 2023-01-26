@@ -112,7 +112,7 @@ Resources:
       Environment:
         Variables:
           TIMESTREAM_DB_NAME: !Ref iotstreamDatabase
-          TIMESTREAM_TABLE_NAME: !Ref sensoreventsTable
+          TIMESTREAM_TABLE_NAME: !GetAtt sensoreventsTable.Name
       Policies:
         - Version: 2012-10-17
           Statement:
@@ -123,7 +123,7 @@ Resources:
             - Effect: Allow
               Action:
                 - timestream:Select
-              Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable}'
+              Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable.Name}'
       CodeUri: lambda/src/lambdaDataSource
 
   ScheduledFunction:
@@ -145,7 +145,7 @@ Resources:
       Environment:
         Variables:
           TIMESTREAM_DB_NAME: !Ref iotstreamDatabase
-          TIMESTREAM_TABLE_NAME: !Ref sensoreventsTable
+          TIMESTREAM_TABLE_NAME: !GetAtt sensoreventsTable.Name
       Policies:
         - Version: 2012-10-17
           Statement:
@@ -156,7 +156,7 @@ Resources:
             - Effect: Allow
               Action:
                 - timestream:WriteRecords
-              Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable}'
+              Resource: !Sub 'arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable.Name}'
       Events:
         ScheduleEvent:
           Type: Schedule
