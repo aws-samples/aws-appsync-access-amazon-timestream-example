@@ -61,12 +61,12 @@ Navigate to AppSync console and select on the API name to view the dashboard for
 `
 query getSensorData {
   getSensorData(durationInMinutes: 10) {
-    time_in_epoch
-    current_fuel_lvl_in_litres
     fleet
     fuel_capacity_in_litres
     load_capacity_in_tons
     make
+    current_fuel_lvl_in_litres
+    gps_location_latlong
     model
     truck_id
   }
@@ -77,7 +77,11 @@ query getSensorData {
 
 You can use a curl to send a query via http post from the command line.
 
-`curl -s -X POST https://<endpoint>.appsync-api.<AWS Region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<API Key>" -d '{"query": "query GetSensorData($durationInMinutes: Int!){getSensorData(durationInMinutes: $dura-tionInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
+`curl -s -X POST https://<endpoint>.appsync-api.<AWS Region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<API Key>" -d '{"query": "query GetSensorData($durationInMinutes: Int!){getSensorData(durationInMinutes: $durationInMinutes){truck_id,current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
+
+**Example output**
+`{"data":{"getSensorData":[{"truck_id":"truck123","current_fuel_lvl_in_litres":"64"},{"truck_id":"truck123","current_fuel_lvl_in_litres":"34"},{"truck_id":"truck123","current_fuel_lvl_in_litres":"41"},{"truck_id":"truck123","current_fuel_lvl_in_litres":"76"}]}}`
+
 
 **Build a client application**
 
