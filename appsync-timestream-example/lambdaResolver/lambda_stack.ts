@@ -7,7 +7,7 @@ const path = require("path");
 
 export class LambdaResolver extends Construct {
 
-    public readonly lambdaIoTEventsHandlerFn: Function
+    public readonly lambdaResolverFn: Function
     public readonly lambdaTimestreamDataSimulatorFn: Function
 
     constructor(scope: Construct, id: string) {
@@ -50,7 +50,7 @@ export class LambdaResolver extends Construct {
         );
 
 
-        this.lambdaIoTEventsHandlerFn = new Function(this, 'AppSyncIoTEventsHandler', {
+        this.lambdaResolverFn = new Function(this, 'AppSyncIoTEventsHandler', {
             code: Code.fromAsset(path.join(__dirname, 'src/lambdaDataSource'), { exclude: ['*.ts'] }),
             handler: 'index.handler',
             runtime: Runtime.NODEJS_14_X,

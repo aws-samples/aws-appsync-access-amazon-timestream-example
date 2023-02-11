@@ -14,5 +14,6 @@ type IOT {
 }
 
 type Query {
-  getSensorData(durationInMinutes: Int): [IOT]
+  getSensorDataUsingLambdaResolver(durationInMinutes: Int): [IOT]
+  getSensorDataUsingJsResolver(durationInMinutes: Int): [IOT]
 }

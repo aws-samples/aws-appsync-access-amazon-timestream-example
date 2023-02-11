@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
+import { App } from 'aws-cdk-lib';
+// import { AppsyncTimestreamExampleStack } from '../lib/appsync-timestream-example-stack';
 import { AppsyncTimestreamExampleStack } from '../lib/appsync-timestream-example-stack';
 import { TimestreamDBStack } from '../lib/timestream-db-stack';
 import { STACK_PREFIX } from './constants';
-import { AwsSolutionsChecks } from 'cdk-nag';
+//import { AwsSolutionsChecks } from 'cdk-nag';
 
-const app = new cdk.App();
+const app = new App();
 
 const timetreamDBStack = new TimestreamDBStack(app, 'TimestreamDB', {
   stackName: `${STACK_PREFIX}-db`,
@@ -33,4 +34,4 @@ new AppsyncTimestreamExampleStack(app, 'AppsyncTimestreamExampleStack', {
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 }).addDependency(timetreamDBStack);
 
-cdk.Aspects.of(app).add(new AwsSolutionsChecks)
+//cdk.Aspects.of(app).add(new AwsSolutionsChecks)

@@ -2,7 +2,7 @@
 const AWS = require("aws-sdk");
 const tsdbClient = new AWS.TimestreamQuery();
 
-const getSensorData = async (durationInMinutes: number) => {
+const getSensorDataUsingLambdaResolver = async (durationInMinutes: number) => {
     try {
         let response;
         const QUERY_1 = `SELECT * FROM ${process.env.TIMESTREAM_DB_NAME}.${process.env.TIMESTREAM_TABLE_NAME} where time > ago(${durationInMinutes}m)`;
@@ -112,4 +112,4 @@ function parseArray(arrayColumnInfo: any, arrayValues: any) {
 }
 
 
-export default getSensorData;
+export default getSensorDataUsingLambdaResolver;

@@ -5,13 +5,13 @@
 // example test. To run these tests, uncomment this file along with the
 // example resource in lib/appsync-timestream-example-stack.ts
 test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new AppsyncTimestreamExample.AppsyncTimestreamExampleStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+    //   const app = new cdk.App();
+    //     // WHEN
+    //   const stack = new AppsyncTimestreamExample.AppsyncTimestreamExampleStack(app, 'MyTestStack');
+    //     // THEN
+    //   const template = Template.fromStack(stack);
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+    //   template.hasResourceProperties('AWS::SQS::Queue', {
+    //     VisibilityTimeout: 300
+    //   });
 });

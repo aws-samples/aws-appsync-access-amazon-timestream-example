@@ -1,5 +1,5 @@
 import { string } from 'yargs';
-import getSensorData from './getSensorData';
+import getSensorDataUsingLambdaResolver from './getSensorDataUsingLambdaResolver';
 
 type AppSyncEvent = {
     info: {
@@ -12,8 +12,8 @@ type AppSyncEvent = {
 
 exports.handler = async (event: AppSyncEvent) => {
     switch (event.info.fieldName) {
-        case "getSensorData":
-            return await getSensorData(event.arguments.durationInMinutes);
+        case "getSensorDataUsingLambdaResolver":
+            return await getSensorDataUsingLambdaResolver(event.arguments.durationInMinutes);
         default:
             return null;
     }

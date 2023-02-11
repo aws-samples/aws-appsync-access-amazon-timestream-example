@@ -1,82 +1,96 @@
-import { Stack, StackProps, Expiration, Duration, CfnOutput } from 'aws-cdk-lib';
+import { Stack, StackProps, Duration, CfnOutput, aws_timestream } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { GraphqlApi, SchemaFile, AuthorizationType } from '@aws-cdk/aws-appsync-alpha';
-import { LambdaResolver } from '../lambda/lambda_stack';
-import { aws_timestream as timestream } from 'aws-cdk-lib';
 import { Schedule, Rule } from 'aws-cdk-lib/aws-events'
-import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets'
+import { GraphqlApi, HttpDataSource, SchemaFile, AppsyncFunction, Resolver, FunctionRuntime, Code } from 'aws-cdk-lib/aws-appsync';
+import { Grant } from 'aws-cdk-lib/aws-iam';
+import { join } from 'path';
 import { DATABASE_NAME, TABLE_NAME } from './constant';
-import { NagSuppressions } from 'cdk-nag';
+import { LambdaResolver } from '../lambdaResolver/lambda_stack';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets'
+
 
 
 export class AppsyncTimestreamExampleStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props);
 
-    const gqlApi = new GraphqlApi(this, 'Api', {
-      name: 'iot-timestream-appsync-api',
-      schema: SchemaFile.fromAsset('graphql/schema.graphql'),
-      authorizationConfig: {
-        defaultAuthorization: {
-          authorizationType: AuthorizationType.API_KEY,
-          apiKeyConfig: {
-            name: 'API Key for AppSyncTimestreamDemo',
-            description: 'Public access',
-            expires: Expiration.after(Duration.days(365))
-          }
-        },
-      },
-      xrayEnabled: true,
-    });
+        const region = Stack.of(this).region;
+        const cell = 'cell1';
+        const api = new GraphqlApi(this, 'timestream', {
+            name: 'appsync-timestream-api',
+            schema: SchemaFile.fromAsset(join(__dirname + '/../graphql/', 'schema.graphql')),
+        });
 
-    new CfnOutput(this, "GraphQLAPIURL", { value: gqlApi.graphqlUrl });
-    new CfnOutput(this, "GraphQLAPIKey", { value: gqlApi.apiKey || '' });
-    new CfnOutput(this, "Stack Region", { value: this.region });
+        const { lambdaTimestreamDataSimulatorFn, lambdaResolverFn } = new LambdaResolver(this, 'appsync');
 
-    const { lambdaIoTEventsHandlerFn, lambdaTimestreamDataSimulatorFn } = new LambdaResolver(this, 'lambdaResolver');
-    const lambdaTimestreamDs = gqlApi.addLambdaDataSource('lambdaDatasource', lambdaIoTEventsHandlerFn);
-
-    lambdaIoTEventsHandlerFn.addEnvironment('TIMESTREAM_DB_NAME', DATABASE_NAME)
-    lambdaIoTEventsHandlerFn.addEnvironment('TIMESTREAM_TABLE_NAME', TABLE_NAME)
-
-    lambdaTimestreamDataSimulatorFn.addEnvironment('TIMESTREAM_DB_NAME', DATABASE_NAME)
-    lambdaTimestreamDataSimulatorFn.addEnvironment('TIMESTREAM_TABLE_NAME', TABLE_NAME)
+        const endpoint = `https://query-${cell}.timestream.${region}.amazonaws.com`;
+        const ds = new HttpDataSource(api, 'timestream', {
+            api,
+            description: 'timestream',
+            endpoint,
+            authorizationConfig: {
+                signingRegion: this.region,
+                signingServiceName: 'timestream',
+            },
+        });
 
 
+        // // AppSync Lambda resolver
+        lambdaResolverFn.addEnvironment('TIMESTREAM_DB_NAME', DATABASE_NAME)
+        lambdaResolverFn.addEnvironment('TIMESTREAM_TABLE_NAME', TABLE_NAME)
 
-    lambdaTimestreamDs.createResolver('Query', {
-      typeName: "Query",
-      fieldName: "getSensorData"
-    });
+        lambdaTimestreamDataSimulatorFn.addEnvironment('TIMESTREAM_DB_NAME', DATABASE_NAME)
+        lambdaTimestreamDataSimulatorFn.addEnvironment('TIMESTREAM_TABLE_NAME', TABLE_NAME)
 
-    new Rule(this, 'addIoTEventRule', {
-      schedule: Schedule.rate(Duration.minutes(2)),
-      targets: [new LambdaFunction(lambdaTimestreamDataSimulatorFn)],
-    })
+        Grant.addToPrincipal({ actions: ['timestream:*'], resourceArns: ['*'], grantee: ds });
 
-    const cfnTable = new timestream.CfnTable(this, 'MyCfnTable', {
-      databaseName: DATABASE_NAME,
-      tableName: TABLE_NAME
-    })
+        const lambdaTimestreamDs = api.addLambdaDataSource('lambdaDatasource', lambdaResolverFn);
 
+        new Resolver(api, 'getSensorDataUsingLambdaResolver', {
+            api,
+            dataSource: lambdaTimestreamDs,
+            typeName: 'Query',
+            fieldName: 'getSensorDataUsingLambdaResolver'
+        });
 
-    new CfnOutput(this, "Table ARN", { value: cfnTable.attrArn });
+        // AppSync JS resolver
+        const fn = new AppsyncFunction(api, 'tstimestreamQuery', {
+            api,
+            name: 'timestreamQuery',
+            dataSource: ds,
+            runtime: FunctionRuntime.JS_1_0_0,
+            code: Code.fromAsset(join(__dirname + '/../jsResolver/src', 'queryTimestream.js')),
+        });
 
-    NagSuppressions.addStackSuppressions(this, [
-      {
-        id: 'AwsSolutions-ASC3',
-        reason: 'The GraphQL API does not have request level logging enabled.'
-      },
-      {
-        id: 'AwsSolutions-IAM5',
-        reason: 'The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.'
-      },
-      {
-        id: 'AwsSolutions-L1',
-        reason: 'The non-container Lambda function is not configured to use the latest runtime version.'
-      }
-    ])
+        new Resolver(api, 'getSensorDataUsingJsResolver', {
+            api,
+            typeName: 'Query',
+            fieldName: 'getSensorDataUsingJsResolver',
+            pipelineConfig: [fn],
+            runtime: FunctionRuntime.JS_1_0_0,
+            code: Code.fromInline(`
+    export function request(){}
+    export function response(ctx){return ctx.prev.result}
+    `),
+        });
 
+        // Schedule lambda function to simulate iot data in timestream table
 
-  }
+        new Rule(this, 'addIoTEventRule', {
+            schedule: Schedule.rate(Duration.minutes(2)),
+            targets: [new LambdaFunction(lambdaTimestreamDataSimulatorFn)],
+        })
+
+        // create timestream table
+
+        const cfnTable = new aws_timestream.CfnTable(this, 'MyCfnTable', {
+            databaseName: DATABASE_NAME,
+            tableName: TABLE_NAME
+        })
+
+        new CfnOutput(this, "GraphQLAPIURL", { value: api.graphqlUrl });
+        new CfnOutput(this, "GraphQLAPIKey", { value: api.apiKey || '' });
+        new CfnOutput(this, "Stack Region", { value: this.region });
+        new CfnOutput(this, "Table ARN", { value: cfnTable.attrArn })
+    }
 }
