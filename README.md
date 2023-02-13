@@ -56,11 +56,12 @@ Navigate to AppSync console and select on the API name to view the dashboard for
 `
 query getSensorData {
   getSensorDataUsingJsResolver(durationInMinutes: 10) {
-    current_fuel_lvl_in_litres
     fleet
     fuel_capacity_in_litres
     load_capacity_in_tons
     make
+    current_fuel_lvl_in_litres
+    gps_location_latlong
     model
     truck_id
   }
@@ -71,13 +72,7 @@ query getSensorData {
 
 You can use a curl to send a query via http post from the command line.
 
-# using AppSync Js resolver
-
-`curl -s -X POST https://<GraphQLAPIEndpoint>.appsync-api.<region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<GraphQLAPIKey>" -d '{"query": "query GetSensorDataUsingJsResolver($durationInMinutes: Int!){getSensorDataUsingJsResolver(durationInMinutes: $durationInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
-
-# using AppSync Lambda resolver
-
-`curl -s -X POST https://<GraphQLAPIEndpoint>.appsync-api.<region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<GraphQLAPIKey>" -d '{"query": "query GetSensorDataUsingLambdaResolver($durationInMinutes: Int!){getSensorDataUsingLambdaResolver(durationInMinutes: $durationInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
+`curl -s -X POST https://<endpoint>.appsync-api.<AWS Region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<API Key>" -d '{"query": "query GetSensorData($durationInMinutes: Int!){getSensorData(durationInMinutes: $dura-tionInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
 
 **Build a client application**
 
