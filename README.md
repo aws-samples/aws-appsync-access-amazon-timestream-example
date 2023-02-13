@@ -21,7 +21,8 @@ Target architecture:
 To deploy the solution,
 
 1. [An AWS Account](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)
-2. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+3. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+4. [Install AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
 
 #### Deploy the example
 
@@ -36,14 +37,8 @@ Due to this solution using Timestream, please ensure you choose a region to depl
 1. Clone the repository to your local machine.
     * `git clone https://github.com/aws-samples/aws-appsync-access-amazon-timestream-example`
 
-2. Create the deployment package.
-    * `aws cloudformation package --template-file appsync-timestream-example/template.yaml --s3-bucket <YOUR_BUCKET_NAME_HERE> --output-template-file appsync-timestream-example/packaged-template.yaml`
-
-    > **Note**
-    Change <YOUR_BUCKET_NAME_HERE> above to be the name of an S3 bucket in the same region that you deploying this solution into.
-
 3. Deploy the solution
-    * `aws cloudformation deploy --template-file appsync-timestream-example/packaged-template.yaml --stack-name appsync-timestream-api --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
+    * `aws cloudformation deploy --template-file appsync-timestream-example/template.yaml --stack-name appsync-timestream-api --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
 
 4. Retrieve the details. Please note down the GraphQL endpoint and API key for testing purpose
     * `aws cloudformation describe-stacks --stack-name appsync-timestream-api --query "Stacks[0].Outputs" --output table`
@@ -60,8 +55,7 @@ Navigate to AppSync console and select on the API name to view the dashboard for
 
 `
 query getSensorData {
-  getSensorData(durationInMinutes: 10) {
-    time_in_epoch
+  getSensorDataUsingJsResolver(durationInMinutes: 10) {
     current_fuel_lvl_in_litres
     fleet
     fuel_capacity_in_litres
@@ -77,14 +71,17 @@ query getSensorData {
 
 You can use a curl to send a query via http post from the command line.
 
-`curl -s -X POST https://<endpoint>.appsync-api.<AWS Region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<API Key>" -d '{"query": "query GetSensorData($durationInMinutes: Int!){getSensorData(durationInMinutes: $dura-tionInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
+# using AppSync Js resolver
+
+`curl -s -X POST https://<GraphQLAPIEndpoint>.appsync-api.<region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<GraphQLAPIKey>" -d '{"query": "query GetSensorDataUsingJsResolver($durationInMinutes: Int!){getSensorDataUsingJsResolver(durationInMinutes: $durationInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
+
+# using AppSync Lambda resolver
+
+`curl -s -X POST https://<GraphQLAPIEndpoint>.appsync-api.<region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "x-api-key:<GraphQLAPIKey>" -d '{"query": "query GetSensorDataUsingLambdaResolver($durationInMinutes: Int!){getSensorDataUsingLambdaResolver(durationInMinutes: $durationInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
 
 **Build a client application**
 
 To learn how to build a client application refer [building a client application](https://docs.aws.amazon.com/appsync/latest/devguide/building-a-client-app.html)
-
-
-
 ### Clean up
 
 In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incurring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
