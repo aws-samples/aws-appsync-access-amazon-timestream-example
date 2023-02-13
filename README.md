@@ -24,23 +24,24 @@ To deploy the solution,
 3. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 4. [Install AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
 
-
 #### Deploy the example
 
 > **Note**
 You are responsible for the cost of the AWS services used while running this sample deployment. There is no additional
 cost for using this sample. For full details, see the pricing pages for each AWS service that you use in this sample. Prices are subject to change.
 
+> **Note**
+Due to this solution using Timestream, please ensure you choose a region to deploy this solution where Timestream is available.
+
+
 1. Clone the repository to your local machine.
     * `git clone https://github.com/aws-samples/aws-appsync-access-amazon-timestream-example`
 
-2. Prepare the deployment package - The `cdk.json` file tells the CDK Toolkit how to execute your app.
-    * `npm run build`                                           compile typescript to js
+3. Deploy the solution
+    * `aws cloudformation deploy --template-file appsync-timestream-example/template.yaml --stack-name appsync-timestream-api --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
 
-3. Deploy AppSync Api stack
-    * `cdk deploy --all`     deploy stack
-4.	Please note down the GraphQL endpoint and API key for testing purpose
-
+4. Retrieve the details. Please note down the GraphQL endpoint and API key for testing purpose
+    * `aws cloudformation describe-stacks --stack-name appsync-timestream-api --query "Stacks[0].Outputs" --output table`
 
 ## Test the example
 
@@ -54,13 +55,13 @@ Navigate to AppSync console and select on the API name to view the dashboard for
 
 `
 query getSensorData {
-  getSensorData(durationInMinutes: 10) {
-    time_in_epoch
-    current_fuel_lvl_in_litres
+  getSensorDataUsingJsResolver(durationInMinutes: 10) {
     fleet
     fuel_capacity_in_litres
     load_capacity_in_tons
     make
+    current_fuel_lvl_in_litres
+    gps_location_latlong
     model
     truck_id
   }
@@ -84,15 +85,11 @@ You can use a curl to send a query via http post from the command line.
 **Build a client application**
 
 To learn how to build a client application refer [building a client application](https://docs.aws.amazon.com/appsync/latest/devguide/building-a-client-app.html)
-
-
-
 ### Clean up
 
 In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incurring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
 
-`cdk destroy --all`
-
+`aws cloudformation delete-stack --stack-name appsync-timestream-api`
 
 ### Conclusion
 
