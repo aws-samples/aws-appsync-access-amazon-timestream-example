@@ -48,7 +48,7 @@ Due to this solution using Timestream, please ensure you choose a region to depl
     * `git clone https://github.com/aws-samples/aws-appsync-access-amazon-timestream-example`
 
 3. Deploy the solution
-    * `aws cloudformation deploy --template-file appsync-timestream-example/template.yaml --stack-name appsync-timestream-api --parameters ParameterKey=SecurityGroups,ParameterValue="<Update cell name from step 3>" --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
+    * `aws cloudformation deploy --template-file appsync-timestream-example/template.yaml --stack-name appsync-timestream-api --parameters ParameterKey=TimestreamCellEndpoint,ParameterValue="<Update cell name from step 3>" --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
 
 4. Retrieve the details. Please note down the GraphQL endpoint and API key for testing purpose
     * `aws cloudformation describe-stacks --stack-name appsync-timestream-api --query "Stacks[0].Outputs" --output table`
