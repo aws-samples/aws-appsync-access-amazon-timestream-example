@@ -23,6 +23,7 @@ To deploy the solution,
 1. [An AWS Account](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)
 3. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 3. [Find timestream cell api endpooint](https://docs.aws.amazon.com/timestream/latest/developerguide/Using-API.endpoint-discovery.describe-endpoints.implementation.html)
+* For example
 
 `
 REGION_ENDPOINT="https://query.timestream.us-east-1.amazonaws.com"
@@ -32,8 +33,10 @@ aws timestream-write describe-endpoints \
 --region $REGION
 `
 
-verify the cell number in the address. In this case, supply cell2 as parameter value
-For example:  
+Verify the cell number in the Address. In the below example, note down cell2 as parameter value and supply in "Deploy the example section step 3".
+
+***For example:***
+
 query-cell2.timestream.us-east-1.amazonaws.com
 
 #### Deploy the example
