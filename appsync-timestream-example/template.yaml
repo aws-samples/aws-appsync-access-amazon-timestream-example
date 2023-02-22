@@ -2,18 +2,6 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Transform: AWS::Serverless-2016-10-31
 
-Metadata:
-  Version: 0.2.0
-
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: Timestream cell name
-        Parameters:
-          - TimestreamCellEndpoint
-    ParameterLabels:
-      TimestreamCellEndpoint:
-        default: Artefacts Bucket Name
 Parameters:
   TimestreamCellEndpoint:
     Description: timestream cell endpoint name
