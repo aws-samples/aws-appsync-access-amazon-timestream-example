@@ -2,6 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Transform: AWS::Serverless-2016-10-31
 
+Description: Deploy AppSync example to expose IoT data in Amazon Timestream DB (uksb-1ttmurd0b)
+
 Parameters:
   TimestreamCellEndpoint:
     Description: timestream cell endpoint name
