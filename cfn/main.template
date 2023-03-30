@@ -411,7 +411,7 @@ Resources:
         import boto3
         from botocore.config import Config
         import json
-        import random
+        #import random
         import time
         import os
 
@@ -443,7 +443,7 @@ Resources:
                 
                 current_time = IngestTimestream.current_milli_time()
                 
-                fuel_in_litres=random.randint(10,80)
+                fuel_in_litres= 10 #random.randint(10,80)
                 gps_location_latlong='55.3618,-3.4433'
                 
                 dimensions = [
