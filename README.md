@@ -40,6 +40,9 @@ Verify the cell number in the Address. In the below example, note down cell2 as 
 query-cell2.timestream.us-east-1.amazonaws.com
 
 #### Deploy the example
+> **Security Note**
+1. This solution does not implement AWS Congnito authentication. In this example, AppSync API key is used to invoke AppSync endpoint.
+2. Please verify suppressed security observations in cloud formation template
 
 > **Note**
 You are responsible for the cost of the AWS services used while running this sample deployment. There is no additional
@@ -47,6 +50,7 @@ cost for using this sample. For full details, see the pricing pages for each AWS
 
 > **Note**
 Due to this solution using Timestream, please ensure you choose a region to deploy this solution where Timestream is available.
+
 
 
 1. Clone the repository to your local machine.
@@ -60,51 +64,31 @@ Due to this solution using Timestream, please ensure you choose a region to depl
 
 ## Test the example
 
-You can test an AppSync API using below multiple options. 
+You can test using AppSync Api console.
 
 **AppSync Console**
 
-Navigate to AppSync console and select on the API name to view the dashboard for your API. Next click on Queries in the left-hand menu to view the query editor. From here, we can test out the API by running the following queries:
+1.	Navigate to AppSync console and select on the API name appsync-timestream-api  to view the dash-board for your API. 
+2.	Next click on Queries in the left-hand menu to view the query editor. From here, we can test out the API by running the following queries:
+<p align="center">
+  <img src="docs/AppSyncConsole1.png" alt="AWS Architecture Diagram" />
+</p>
+3. Select query getSensorDataUsingJsResolver(durationInMinutes: 10) and choose the fields as shown in the screen below. Press the red colour arrow button to execute the query. You can see the result in JSON format on the right side.
+<p align="center">
+  <img src="docs/AppSyncConsole2.png" alt="AWS Architecture Diagram" />
+</p>
+4.	Next, select query getSensorDataUsingJsResolver(durationInMinutes: 10) and choose the fields as shown in screen below. Press the red colour arrow button to execute the query. You can see the result in JSON format on the right side.
+<p align="center">
+  <img src="docs/AppSyncConsole3.png" alt="AWS Architecture Diagram" />
+</p>
 
-***GraphQL***
-
-`
-query getSensorData {
-  getSensorDataUsingJsResolver(durationInMinutes: 10) {
-    fleet
-    fuel_capacity_in_litres
-    load_capacity_in_tons
-    make
-    current_fuel_lvl_in_litres
-    gps_location_latlong
-    model
-    truck_id
-  }
-}
-`
-
-**Command CLI**
-
-You can use a curl to send a query via http post from the command line.
-
-# using AppSync Js resolver
-
-`curl -s -X POST https://<GraphQLAPIEndpoint>.appsync-api.<region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "<GraphQLAPIKey>" -d '{"query": "query GetSensorDataUsingJsResolver($durationInMinutes: Int!){getSensorDataUsingJsResolver(durationInMinutes: $durationInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
-
-# using AppSync Lambda resolver
-
-`curl -s -X POST https://<GraphQLAPIEndpoint>.appsync-api.<region>.amazonaws.com/graphql -H "Content-Type:application/json"  -H "<GraphQLAPIKey>" -d '{"query": "query GetSensorDataUsingLambdaResolver($durationInMinutes: Int!){getSensorDataUsingLambdaResolver(durationInMinutes: $durationInMinutes){current_fuel_lvl_in_litres}}","variables":"{\"durationInMinutes\":\"10\"}"}'`
-
-
-
-**Build a client application**
-
-To learn how to build a client application refer [building a client application](https://docs.aws.amazon.com/appsync/latest/devguide/building-a-client-app.html)
 ### Clean up
 
-In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incurring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
+In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
+`
+aws cloudformation delete-stack --stack-name appsync-timestream-api
+`
 
-`aws cloudformation delete-stack --stack-name appsync-timestream-api`
 
 ### Conclusion
 
