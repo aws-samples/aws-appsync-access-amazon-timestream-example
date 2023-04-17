@@ -33,7 +33,7 @@ aws timestream-write describe-endpoints \
 --region $REGION
 `
 
-Verify the cell number in the Address. In the below example, note down cell2 as parameter value and supply in "Deploy the example section step 3".
+Verify the cell number in the Address. In the below example, note down cell2 as parameter value and supply in "Deploy the example section step 2".
 
 ***For example:***
 
@@ -84,7 +84,7 @@ You can test using AppSync Api console.
 
 ### Clean up
 
-In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
+In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the CDK stack, use the following command.
 
 `
 aws cloudformation delete-stack --stack-name appsync-timestream-api
