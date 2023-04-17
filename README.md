@@ -73,11 +73,11 @@ You can test using AppSync Api console.
 <p align="center">
   <img src="docs/AppSyncConsole1.png" alt="AWS Architecture Diagram" />
 </p>
-3. Select query getSensorDataUsingJsResolver(durationInMinutes: 10) and choose the fields as shown in the screen below. Press the red colour arrow button to execute the query. You can see the result in JSON format on the right side.
+3. Select query **getSensorDataUsingJsResolver(durationInMinutes: 10)** and choose the fields as shown in the screen below. Press the red colour arrow button to execute the query. You can see the result in JSON format on the right side.
 <p align="center">
   <img src="docs/AppSyncConsole2.png" alt="AWS Architecture Diagram" />
 </p>
-4.	Next, select query getSensorDataUsingJsResolver(durationInMinutes: 10) and choose the fields as shown in screen below. Press the red colour arrow button to execute the query. You can see the result in JSON format on the right side.
+4.	Next, select query **getSensorDataUsingJsResolver(durationInMinutes: 10)** and choose the fields as shown in screen below. Press the red colour arrow button to execute the query. You can see the result in JSON format on the right side.
 <p align="center">
   <img src="docs/AppSyncConsole3.png" alt="AWS Architecture Diagram" />
 </p>
@@ -85,6 +85,7 @@ You can test using AppSync Api console.
 ### Clean up
 
 In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the CDK stack, use the following command. Since there are multiple stacks, you must explicitly specify a ‘--all’ option.
+
 `
 aws cloudformation delete-stack --stack-name appsync-timestream-api
 `
