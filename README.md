@@ -84,7 +84,7 @@ You can test using AppSync Api console.
 
 ### Clean up
 
-In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the CDK stack, use the following command.
+In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the stack, use the following command.
 
 `
 aws cloudformation delete-stack --stack-name appsync-timestream-api
