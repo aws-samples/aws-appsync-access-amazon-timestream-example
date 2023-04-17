@@ -93,9 +93,7 @@ aws cloudformation delete-stack --stack-name appsync-timestream-api
 
 ### Conclusion
 
-In this post, we learned how to create AppSync API to connect to the Timestream database and query the data. In doing so, we saw how to set up a direct lambda resolver to use direct Timestram APIs. Overall, using Amazon Timestream and AWS AppSync together can help you build scalable, high-performance applications that can efficiently store and retrieve large volumes of sensor data in near real-time. 
-
-To learn more about Amazon AWS AppSync and Amazon Timestream, refer to [AWS AppSync documentation](https://aws.amazon.com/appsync/) and [Amazon Timestream documentation](https://aws.amazon.com/timestream/).  
+In this post, we learned how to create AppSync API to connect to the Timestream database and query the data. In doing do, we presented two code examples, one with APPSYNC_JS runtime and a lambda function. You can write your own code that implements your custom business logic by using AWS AppSync functions to access your data sources. This makes it easy for you to directly interact with data sources like Amazon DynamoDB, Aurora Serverless, OpenSearch Service, HTTP APIs, and other AWS services without having to deploy additional computational services or infrastructure. AWS AppSync also makes it easy to interact with an AWS Lambda function by configuring a Lambda data source. Lambda data sources allow you to run complex business logic using AWS Lambda’s full set capabilities to resolve a GraphQL request. In situations where you need to implement complex business logic that is not supported by the APPSYNC_JS runtime, you can use a Lambda data source as a proxy to interact with your target data source.
 
 
 ## Security
