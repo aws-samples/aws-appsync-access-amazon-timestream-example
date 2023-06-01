@@ -23,33 +23,31 @@ To deploy the solution,
 1. [An AWS Account](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)
 3. [The AWS Command Line Interface (AWS CLI)](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 3. [Find timestream cell api endpooint](https://docs.aws.amazon.com/timestream/latest/developerguide/Using-API.endpoint-discovery.describe-endpoints.implementation.html)
-* For example
+  
+  * Acquire the endpoint for the API you would like to make calls against (Write or Query) using the DescribeEndpoints request.
+    1.	Write call : ingest.timestream.<region>.amazonaws.com
+    2.	Query call: query.timestream.<region>.amazonaws.com
 
-`
-REGION_ENDPOINT="https://query.timestream.us-east-1.amazonaws.com"
-REGION=us-east-1
-aws timestream-write describe-endpoints \
---endpoint-url $REGION_ENDPOINT \
---region $REGION
-`
+  * For example
 
-Verify the cell number in the Address. In the below example, note down cell2 as parameter value and supply in `Deploy the example section step 2`.
+    `
+    REGION_ENDPOINT="https://query.timestream.us-east-1.amazonaws.com"
+    REGION=us-east-1
+    aws timestream-write describe-endpoints \
+    --endpoint-url $REGION_ENDPOINT \
+    --region $REGION
+    `
+    
+    * Verify the cell number in the Address. In the below example, note down cell2 as parameter value and supply in `Deploy the example section step 2`.
 
-***For example:***
+    ***For example:***
 
-query-cell2.timestream.us-east-1.amazonaws.com
+    query-cell2.timestream.us-east-1.amazonaws.com
 
 #### Deploy the example
 > **Security Note**
 1. This solution does not implement AWS Congnito authentication. In this example, AppSync API key is used to invoke AppSync endpoint.
 2. Please verify suppressed security observations in cloud formation template
-
-> **Note**
-You are responsible for the cost of the AWS services used while running this sample deployment. There is no additional
-cost for using this sample. For full details, see the pricing pages for each AWS service that you use in this sample. Prices are subject to change.
-
-> **Note**
-Due to this solution using Timestream, please ensure you choose a region to deploy this solution where Timestream is available.
 
 
 
@@ -84,12 +82,11 @@ You can test using AppSync Api console.
 
 ### Clean up
 
-In this blog post, we used a lambda function to simulate data at 2-minute interval. Hence, to avoid incur-ring future charges, clean up the resources created. To delete the stack, use the following command.
+To avoid incurring future charges, clean up the resources created. To delete the stack, use the following command. 
 
 `
 aws cloudformation delete-stack --stack-name appsync-timestream-api
 `
-
 
 ### Conclusion
 
