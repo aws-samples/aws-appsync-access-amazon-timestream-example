@@ -37,7 +37,7 @@ To deploy the solution,
     --endpoint-url $REGION_ENDPOINT \
     --region $REGION
     `
-    
+
     * Verify the cell number in the Address. In the below example, note down cell2 as parameter value and supply in `Deploy the example section step 2`.
 
     ***For example:***
@@ -45,10 +45,10 @@ To deploy the solution,
     query-cell2.timestream.us-east-1.amazonaws.com
 
 #### Deploy the example
+
 > **Security Note**
 1. This solution does not implement AWS Congnito authentication. In this example, AppSync API key is used to invoke AppSync endpoint.
 2. Please verify suppressed security observations in cloud formation template
-
 
 
 1. Clone the repository to your local machine.
