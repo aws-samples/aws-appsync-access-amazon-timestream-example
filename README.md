@@ -9,8 +9,6 @@ This blog post looks at how to build [GraphQL API](https://graphql.org/) using [
 
 ### Architecture
 
-Target architecture:
-
 <p align="center">
   <img src="docs/Appsync-timestream.png" alt="AWS Architecture Diagram" />
 </p>
