@@ -44,20 +44,20 @@ To deploy the solution,
 
     query-cell2.timestream.us-east-1.amazonaws.com
 
-#### Deploy the example
-
 > **Security Note**
-1. This solution does not implement AWS Congnito authentication. In this example, AppSync API key is used to invoke AppSync endpoint.
-2. Please verify suppressed security observations in cloud formation template
 
+  * This solution does not implement AWS Congnito authentication. In this example, AppSync API key is used to invoke AppSync endpoint.
+  * Please verify suppressed security observations in cloud formation template
+
+#### Deploy the example
 
 1. Clone the repository to your local machine.
     * `git clone https://github.com/aws-samples/aws-appsync-access-amazon-timestream-example`
 
-3. Deploy the solution
+2. Deploy the solution
     * `aws cloudformation deploy --template-file cfn/template.yaml --stack-name appsync-timestream-api --parameter-overrides ParameterKey=TimestreamCellEndpoint,ParameterValue="<Update cell name from step 3>" --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND`
 
-4. Retrieve the details. Please note down the GraphQL endpoint and API key for testing purpose
+3. Retrieve the details. Please note down the GraphQL endpoint and API key for testing purpose
     * `aws cloudformation describe-stacks --stack-name appsync-timestream-api --query "Stacks[0].Outputs" --output table`
 
 ## Test the example
