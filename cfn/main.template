@@ -13,13 +13,13 @@ Parameters:
     ConstraintDescription: Must contain only alphanumeric characters.
 
 Resources:
-  iotstreamDatabase:
+  bv_timestream_1:
     Type: AWS::Timestream::Database
 
-  sensoreventsTable:
+  bv_timestream_table_1:
     Type: AWS::Timestream::Table
     Properties:
-      DatabaseName: !Ref iotstreamDatabase
+      DatabaseName: !Ref bv_timestream_1
 
   iotTimestreamAppSyncApi:
     Type: AWS::AppSync::GraphQLApi
@@ -78,7 +78,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - timestream:Select
-                Resource: !Sub "arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable.Name}"
+                Resource: !Sub "arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${bv_timestream_1}/table/${bv_timestream_table_1.Name}"
 
   HttpDataSource:
     Type: AWS::AppSync::DataSource
@@ -155,7 +155,7 @@ Resources:
 
         function request(ctx) {
             const { durationInMinutes } = ctx.args;
-            const QUERY_1 = `SELECT * FROM "${iotstreamDatabase}"."${sensoreventsTable.Name}" where time > ago(${!durationInMinutes}m)`;
+            const QUERY_1 = `SELECT * FROM "${bv_timestream_1}"."${bv_timestream_table_1.Name}" where time > ago(${!durationInMinutes}m)`;
 
             return {
                 method: 'POST',
@@ -244,8 +244,8 @@ Resources:
       Handler: index.handler
       Environment:
         Variables:
-          TIMESTREAM_DB_NAME: !Ref iotstreamDatabase
-          TIMESTREAM_TABLE_NAME: !GetAtt sensoreventsTable.Name
+          TIMESTREAM_DB_NAME: !Ref bv_timestream_1
+          TIMESTREAM_TABLE_NAME: !GetAtt bv_timestream_table_1.Name
       Policies:
         - Version: 2012-10-17
           Statement:
@@ -256,7 +256,7 @@ Resources:
             - Effect: Allow
               Action:
                 - timestream:Select
-              Resource: !Sub "arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable.Name}"
+              Resource: !Sub "arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${bv_timestream_1}/table/${bv_timestream_table_1.Name}"
       InlineCode: |
         "use strict";
 
@@ -387,8 +387,8 @@ Resources:
       Handler: index.lambda_handler
       Environment:
         Variables:
-          TIMESTREAM_DB_NAME: !Ref iotstreamDatabase
-          TIMESTREAM_TABLE_NAME: !GetAtt sensoreventsTable.Name
+          TIMESTREAM_DB_NAME: !Ref bv_timestream_1
+          TIMESTREAM_TABLE_NAME: !GetAtt bv_timestream_table_1.Name
       Policies:
         - Version: 2012-10-17
           Statement:
@@ -399,7 +399,7 @@ Resources:
             - Effect: Allow
               Action:
                 - timestream:WriteRecords
-              Resource: !Sub "arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${iotstreamDatabase}/table/${sensoreventsTable.Name}"
+              Resource: !Sub "arn:${AWS::Partition}:timestream:${AWS::Region}:${AWS::AccountId}:database/${bv_timestream_1}/table/${bv_timestream_table_1.Name}"
       Events:
         ScheduleEvent:
           Type: Schedule
@@ -519,7 +519,7 @@ Outputs:
     Value: !Ref AWS::Region
 
   TimestreamDatabaseARN:
-    Value: !GetAtt iotstreamDatabase.Arn
+    Value: !GetAtt bv_timestream_1.Arn
 
   TableARN:
-    Value: !GetAtt sensoreventsTable.Arn
+    Value: !GetAtt bv_timestream_table_1.Arn
